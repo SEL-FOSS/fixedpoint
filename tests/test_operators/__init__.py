@@ -6,6 +6,7 @@ import struct
 import re
 import sys
 import operator
+import itertools
 
 from ..init import (
     uut,
@@ -85,6 +86,33 @@ def test_addition():
         regular = a + floater
         nose.tools.assert_equal(regular, reflected)
         nose.tools.assert_equal(regular.qformat, reflected.qformat)
+
+@tools.setup(progress_bar=False)
+def test_addition_mixed_signedness():
+    """Verify +, += do not overflow when signedness differs
+    """
+    # Regression: Q4.0 + UQ4.0 used to produce a Q5.0 that wrapped to -10
+    s = uut.FixedPoint(7, 1, 4, 0, rounding='in')
+    u = uut.FixedPoint(15, 0, 4, 0, rounding='in')
+    for x in (s + u, u + s):
+        nose.tools.assert_equal(int(x), 22)
+        nose.tools.assert_equal(x.qformat, 'Q6.0')
+
+    # Exhaustively check the value of every sum over small formats
+    formats = [(m, n) for m in range(1, 4) for n in range(3)]
+    for (am, an), (bm, bn) in itertools.product(formats, repeat=2):
+        for asign, bsign in itertools.product([0, 1], repeat=2):
+            for abits in range(2**(am + an)):
+                a = uut.FixedPoint(hex(abits), asign, am, an, rounding='in')
+                for bbits in range(2**(bm + bn)):
+                    b = uut.FixedPoint(hex(bbits), bsign, bm, bn,
+                                       rounding='in')
+                    expected = float(a) + float(b)
+                    nose.tools.assert_equal(float(a + b), expected)
+                    nose.tools.assert_equal(float(b + a), expected)
+                    acc = uut.FixedPoint(a)
+                    acc += b
+                    nose.tools.assert_equal(float(acc), expected)
 
 @tools.setup(progress_bar=True, require_matlab=True)
 def test_subtraction():
