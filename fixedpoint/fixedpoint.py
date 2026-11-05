@@ -713,7 +713,10 @@ class FixedPoint:
         with augend, addend:
             # Determine the Q format of the sum
             n: int = max(augend._n, addend._n)
-            m: int = max(augend._m, addend._m) + 1
+
+            # Mixed signedness needs an extra integer bit for the unsigned range
+            sign_mismatch: bool = augend._signed ^ addend._signed
+            m: int = max(augend._m, addend._m) + 1 + sign_mismatch
             signed: bool = bool(augend._signed or addend._signed)
 
             # Align binary points

@@ -22,12 +22,12 @@ full-precision; that is, there is always bit growth.
     | | (unsigned)        | | (unsigned)        | | :math:`x = 1 + max\{m_1, m_2\}` |
     |                     |                     | | :math:`y = max\{n_1, n_2\}`     |
     +---------------------+---------------------+-----------------------------------+
-    | | :math:`Qm_1.n_1`  | | :math:`Qm_2.n_2`  |                                   |
-    | | (signed)          | | (signed)          |                                   |
-    |                     |                     |                                   |
-    +---------------------+---------------------+                                   |
+    | | :math:`Qm_1.n_1`  | | :math:`Qm_2.n_2`  | | :math:`Qx.y`, where             |
+    | | (signed)          | | (signed)          | | :math:`x = 1 + max\{m_1, m_2\}` |
+    |                     |                     | | :math:`y = max\{n_1, n_2\}`     |
+    +---------------------+---------------------+-----------------------------------+
     | | :math:`Qm_1.n_1`  | | :math:`UQm_2.n_2` | | :math:`Qx.y`, where             |
-    | | (signed)          | | (unsigned)        | | :math:`x = 1 + max\{m_1, m_2\}` |
+    | | (signed)          | | (unsigned)        | | :math:`x = 2 + max\{m_1, m_2\}` |
     |                     |                     | | :math:`y = max\{n_1, n_2\}`     |
     +---------------------+---------------------+                                   |
     | | :math:`UQm_1.n_1` | | :math:`Qm_2.n_2`  |                                   |
@@ -36,7 +36,7 @@ full-precision; that is, there is always bit growth.
     +---------------------+---------------------+-----------------------------------+
 
 As indicated in the table, any combination of signed and unsigned numbers can
-be added together. The sum is only unsigned when both augend and added are
+be added together. The sum is only unsigned when both augend and addend are
 unsigned.
 
 Overflow is not possible using the addition operators.
@@ -92,7 +92,7 @@ Mixed Signedness
        Q4.4
     + UQ3.5
     -------
-       Q5.5
+       Q6.5
 
 Additional Examples
 ===============================================================================
